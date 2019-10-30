@@ -7,7 +7,9 @@
       </el-form-item>
       <el-input v-model="from.captcha" placeholder="请输入验证码" style="margin-bottom:20px;">
         <template slot="append">
-          获取验证码
+          <div @click="getCaptcha">
+            获取验证码
+          </div>
         </template>
       </el-input>
       <el-form-item prop="nickname">
@@ -27,52 +29,66 @@
 </template>
 
 <script>
+import { getCaptcha } from '@/api/index.js'
 export default {
+
   data () {
     const validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm2.pass) {
+      } else if (value !== this.from.password) {
         callback(new Error('两次输入密码不一致!'))
       } else {
         callback()
       }
     }
     return {
-
       from: {
-        username: '',
-        nickname: '',
-        captcha: '',
-        password: '',
-        password2: ''
+        username: '13800138000',
+        nickname: '13800138000',
+        captcha: '000000',
+        password: '13800138000',
+        password2: '13800138000'
       },
       rules: {
         username: [
           { required: true, message: '请输入正确的手机号', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入正确的密码', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         nickname: [
           { required: true, message: '请输入正确的昵称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         password2: [
           { required: true, message: '请输入正确的昵称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' },
           { validator: validatePass2, trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
+    getCaptcha () {
+      getCaptcha(this.from.username)
+        .then((res) => {
+          console.log(res)
+        })
+    },
     headerRegister () {
       this.$refs.from.validate((valid) => {
         if (valid) {
-          console.log('发送请求成功了')
+          // 过滤掉password2
+          const { password2, ...resForm } = this.from
+          // register(this.from)
+          //   .then((res) => {
+          //     console.log(res)
+          //   })
+          this.$axios.post('/accounts/register', resForm)
+            .then(res => console.log(res))
         } else {
           this.$message.warning('请输入合法的用户信息')
           return false

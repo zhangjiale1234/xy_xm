@@ -37,17 +37,40 @@
         </nuxt-link>
       </div>
       <div class="main_login">
-        <el-dropdown>
-          <span class="el-dropdown-link">
-            <i class="el-icon-bell" /> 消息 <i class="el-icon-caret-bottom" />
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>黄金糕</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <nuxt-link class="login_link" to="/user/login">
-          登录 / 注册
-        </nuxt-link>
+        <div
+          v-if="userinfo.token"
+          class="login_user"
+        >
+          <el-dropdown>
+            <div class="el-dropdown-link">
+              <img
+                :src="$axios.defaults.baseURL+userinfo.user.defaultAvatar"
+                alt=""
+              >
+              <span>{{ userinfo.user.nickname }}</span>
+              <i class="el-icon-caret-bottom" />
+            </div>
+            <span class="el-dropdown-link">
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>个人中心</el-dropdown-item>
+                <el-dropdown-item><div @click="headerExit">退出</div></el-dropdown-item>
+              </el-dropdown-menu>
+            </span>
+          </el-dropdown>
+        </div>
+        <div v-else class="main_login">
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <i class="el-icon-bell" /> 消息 <i class="el-icon-caret-bottom" />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>消息</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <nuxt-link class="login_link" to="/user/login">
+            登录 / 注册
+          </nuxt-link>
+        </div>
       </div>
     </div>
   </div>
@@ -55,10 +78,47 @@
 
 <script>
 export default {
+  // data () {
+  //   return {
+  //     token: localStorage.getItem('userinfo')
+  //   }
+  // }
+  computed: {
+    userinfo () {
+      return this.$store.state.user.userinfo
+    }
+  },
+  mounted () {
+    const tokenStr = localStorage.getItem('userinfo')
 
+    if (tokenStr) {
+      const userinfo = JSON.parse(tokenStr)
+      // this.userinfo.token = token.token
+      // console.log()
+      this.$store.commit('user/setUser', userinfo)
+    }
+    // this.userinfo.token = token
+  },
+  methods: {
+    headerExit () {
+      localStorage.removeItem('userinfo')
+      this.$store.commit('user/setUser', { token: '', userinfo: {} })
+    }
+  }
 }
 </script>
 <style lang="less"  scoped>
+
+.login_user {
+   display: flex;
+  .el-dropdown-link {
+    img {
+      width: 36px;
+    }
+    display: flex;
+    align-items: center;
+  }
+}
 .header {
   border-bottom: 1px solid #ccc;
   a {

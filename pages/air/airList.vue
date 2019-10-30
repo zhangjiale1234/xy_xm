@@ -80,6 +80,25 @@
             </div>
           </div>
         </div>
+        <div class="contain_hide">
+          <div class="hide_left">
+            低价推荐
+          </div>
+          <div class="hide_right">
+            <div class="hide_center">
+              <span>经济舱|</span><span>上海一诺千金航空公司</span>
+            </div>
+            <div class="hide_price">
+              ￥1000
+            </div>
+            <div class="hide_btn">
+              <el-button type="primary" round size="mini" style="backgroundcolor:#e6a23c">
+                选定
+              </el-button>
+              <p>剩余：88</p>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="contain_right">
         <div class="contain_call">
@@ -210,6 +229,46 @@ export default {
                 color: orange;
               }
         }
+      }
+      .contain_hide{
+        background-color: #f6f6f6;
+        display: flex;
+        align-items: center;
+        border: 1px solid #ccc;
+        height: 90px;
+        .hide_left{
+          flex: 1;
+          margin-left: 20px;
+        }
+        .hide_right{
+          flex: 5;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+
+        .hide_center{
+          >span:nth-child(1){
+            color: green;
+          }
+          font-size: 13px;
+
+        }
+        .hide_price{
+          color: orange;
+          font-size: 20px;
+
+        }
+        .hide_btn{
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        >p{
+          font-size: 13px;
+        }
+        }
+        }
+
       }
     }
     .contain_right {

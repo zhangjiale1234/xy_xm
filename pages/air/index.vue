@@ -113,7 +113,7 @@ export default {
       // 点击搜索
       if (this.form.deparCity && this.form.destCity && this.form.deparDate) {
         // 判断是否有值，有值在跳转页面发送请求
-        this.$router.push('/air/airList')
+        this.$router.push({ path: '/air/airList', query: this.form })
       } else {
         this.$message.warning('请输入正确的机票信息')
         return false

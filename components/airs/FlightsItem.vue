@@ -1,22 +1,22 @@
 <template>
   <div class="flights_item">
-    <div class="item_main" @click="isShow=!isShow">
+    <div class="item_main" @click="headleShow">
       <div class="item_name">
-        北京---上海
+        {{ flightslist.airline_name }}{{ flightslist.flight_no }}
       </div>
       <div class="item_depart_date">
-        <p>2019-10-31</p>
-        <p>北京---上海</p>
+        <p>{{ flightslist.dep_time }}</p>
+        <p>{{ flightslist.org_airport_name }}{{ flightslist.org_airport_quay }}</p>
       </div>
       <div class="duration">
-        到
+        2时50分
       </div>
       <div class="item_dest_date">
-        <p>23：30</p>
-        <p>选定</p>
+        <p>{{ flightslist.dep_time }}</p>
+        <p>{{ flightslist.dst_airport_name }}{{ flightslist.dst_airport_quay }}</p>
       </div>
       <div class="item_price">
-        <p>￥<span>810</span>起</p>
+        <p>￥<span>{{ flightslist.base_price*0.6 }}</span>起</p>
       </div>
     </div>
     <div v-show="isShow" class="item_info">
@@ -25,19 +25,19 @@
       </div>
       <div class="item_seat">
         <!-- 循环来 显示  -->
-        <div v-for="(item,index) in data.seat_infos" :key="index" class="seat_row">
+        <div v-for="(item,index) in flightslist.seat_infos" :key="index" class="seat_row">
           <div class="seat_row_name">
-            <span>经济舱 </span> | 上海一诺千金有限公司
+            <span>{{ item.name }} </span> | {{ item.supplierName }}
           </div>
           <div class="seat_row_price">
-            ￥188
+            ￥{{ item.org_settle_price_coupon }}
           </div>
           <div class="seat_row_btns">
             <div>
-              <el-button type="warning" size="mini">
+              <el-button type="warning" size="mini" style="width:60px;height:30px">
                 选定
               </el-button>
-              <p>剩余:99</p>
+              <p>剩余:{{ item.discount }}</p>
             </div>
           </div>
         </div>
@@ -48,18 +48,27 @@
 
 <script>
 export default {
+  // 父传子 接参数
+  props: ['flightslist'],
   data () {
     return {
       isShow: false
     }
   },
-  computed: {
-
+  methods: {
+    headleShow () {
+      this.isShow = !this.isShow
+      this.$emit('isShow', this.isShow)
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
+*{
+    margin: 0;
+    padding: 0;
+}
 /* css tree  */
 .flights_item {
   border: 1px solid #ccc;

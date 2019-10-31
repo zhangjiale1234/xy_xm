@@ -17,9 +17,9 @@
           <div class="main_body">
             <div class="body_input">
               <el-form ref="form" label-width="100px" :rules="rules">
-                <el-form-item label="出发城市" prop="deparCity">
+                <el-form-item label="出发城市" prop="departCity">
                   <el-autocomplete
-                    v-model="form.deparCity"
+                    v-model="form.departCity"
                     :fetch-suggestions="querySearchAsync"
                     placeholder="出发城市"
                     @select="handleSelect"
@@ -37,10 +37,10 @@
                     @select="handleSelect2"
                   />
                 </el-form-item>
-                <el-form-item label="活动时间" prop="deparDate">
+                <el-form-item label="活动时间" prop="departDate">
                   <el-col :span="11">
                     <el-date-picker
-                      v-model="form.deparDate"
+                      v-model="form.departDate"
                       type="date"
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd"
@@ -75,26 +75,26 @@ export default {
       restaurants: [],
       form: {
       // 出发城市
-        deparCity: '',
+        departCity: '',
         // 出发城市码
-        deparCode: '',
+        departCode: '',
         // 目标城市
         destCity: '',
         // 目标城市码
         destCode: '',
         // 日期
-        deparDate: ''
+        departDate: ''
       },
       currentIndex: 0,
       // 添加规则
       rules: {
-        // deparCity: [
+        // departCity: [
         //   { required: true, message: '请输入出发城市', trigger: 'blur' }
         // ],
         // destCity: [
         //   { required: true, message: '请输入到达城市', trigger: 'blur' }
         // ],
-        // deparDate: [
+        // departDate: [
         //   { required: true, message: '请输入出发日期', trigger: 'blur' }
         // ]
       }
@@ -106,12 +106,12 @@ export default {
   methods: {
     headerChange () {
       // 点击交换之后将两边的值进行替换，es6语法
-      [this.form.deparCity, this.form.deparCode, this.form.destCity, this.form.destCode] =
-      [this.form.destCity, this.form.destCode, this.form.deparCity, this.form.deparCode]
+      [this.form.departCity, this.form.departCode, this.form.destCity, this.form.destCode] =
+      [this.form.destCity, this.form.destCode, this.form.departCity, this.form.departCode]
     },
     headerSelect () {
       // 点击搜索
-      if (this.form.deparCity && this.form.destCity && this.form.deparDate) {
+      if (this.form.departCity && this.form.destCity && this.form.departDate) {
         // 判断是否有值，有值在跳转页面发送请求
         this.$router.push({ path: '/air/airList', query: this.form })
       } else {
@@ -131,6 +131,8 @@ export default {
             console.log(res)
             //     // 让值变成value：值得形式
             res.data.data.forEach((e) => {
+              // 把 广州市  “市” 移除 因为 后台不需要 “市”
+              e.name = e.name.replace('市', '')
               e.value = e.name
             })
             // 赋值给restaurants
@@ -144,7 +146,7 @@ export default {
       // item = 搜索城市的信息对象
       // 点击城市的时候获取出发到城市码
 
-      this.form.deparCode = item.sort
+      this.form.departCode = item.sort
       console.log(item)
     },
     handleSelect2 (item2) {

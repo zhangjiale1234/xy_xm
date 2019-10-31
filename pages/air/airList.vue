@@ -1,348 +1,132 @@
 <template>
-  <div class="airList">
-    <div class="contain">
-      <div class="contain_left">
-        <div class="main_nav">
-          <div class="nav_select">
-            <div class="item_path">
-              单程：上海-广州/2019-10-31
-            </div>
-            <div class="select_item">
-              <el-select placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in [{ value: '起飞机场', label: '黄金糕' }]"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </div>
-            <div class="select_item">
-              <el-select placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in [{ value: '起飞时间', label: '黄金糕' }]"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </div>
-            <div class="select_item">
-              <el-select placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in [{ value: '航空公司', label: '黄金糕' }]"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </div>
-            <div class="select_item">
-              <el-select placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in [{ value: '机型', label: '黄金糕' }]"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </div>
-          </div>
-          <div class="nav_select2">
-            筛选：
-            <el-button type="primary" round size="mini">
-              撤销
-            </el-button>
-          </div>
-        </div>
-        <div class="main">
-          <div class="main_title">
-            <span>航空信息</span>
-            <span>起飞时间</span>
-            <span>到达时间</span>
-            <span>价格</span>
-          </div>
-          <div class="main_body">
-            <div class="body_item">
-              <span>东航mu5316</span>
-              <div class="item_date">
-                <p>20:30</p>
-                <p>白云机场</p>
-              </div>
-              <div class="item_date">
-                <p>22:30</p>
-                <p>虹桥机场</p>
-              </div>
-              <span>
-                ￥
-                <span class="price">810</span>起
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="contain_hide">
-          <div class="hide_left">
-            低价推荐
-          </div>
-          <div class="hide_right">
-            <div class="hide_center">
-              <span>经济舱|</span><span>上海一诺千金航空公司</span>
-            </div>
-            <div class="hide_price">
-              ￥1000
-            </div>
-            <div class="hide_btn">
-              <el-button type="primary" round size="mini" style="backgroundcolor:#e6a23c">
-                选定
-              </el-button>
-              <p>剩余：88</p>
-            </div>
-          </div>
-        </div>
+  <div class="flights">
+    <div class="flights_main">
+      <!-- 筛选模块开始 -->
+      <FlightsFilter
+        v-if="flightsData.flights.length"
+        :options="flightsData.options"
+        :info="flightsData.flightsInfo"
+      />
+      <!-- 筛选模块结束 -->
+      <!-- 头部开始 -->
+      <FlightsHead />
+      <!-- 头部结束 -->
+      <!-- 机票列表开始 -->
+      <div class="air_list">
+        <!-- 最终数据要显示分页完毕后的数据 -->
+        <FlightsItem v-for="(item,index) in Pagination" :key="index" :flightslist="item" />
       </div>
-      <div class="contain_right">
-        <div class="contain_call">
-          <div class="call_icon">
-            <!-- 图标 -->
-            <div class="icon_item">
-              <span class="iconfont iconweibiaoti-_huabanfuben" style="color:#409eff" />
-              <span>航协认证</span>
-            </div>
-            <div class="icon_item">
-              <span class="iconfont iconbaozheng" style="color:#008000" />
-              <span>出行认账</span>
-            </div>
-            <div class="icon_item">
-              <span class="iconfont icondianhua" style="color:#409eff" />
-              <span>7x24</span>
-            </div>
-          </div>
-          <!-- 客服电话 -->
-          <p>免费客服电话：123456789</p>
-        </div>
-        <div class="contain_history">
-          <div class="history_title">
-            <p>历史记录</p>
-          </div>
-          <div class="history_item">
-            <div class="item_left_l">
-              <p>广州-上海</p>
-              <p>2019-10-31</p>
-            </div>
-            <div class="item_right">
-              <span>选择</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- 机票列表结束 -->
+      <!-- 分页 -->
+      <el-pagination
+        :current-page="pageIndex"
+        :page-sizes="[2,4,6,8]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+      <!-- 分页结束 -->
     </div>
+    <!-- 侧边栏 开始 -->
+    <div class="flights_aside">
+      2
+    </div>
+    <!-- 侧边栏 结束 -->
   </div>
 </template>
 
 <script>
+import FlightsFilter from '@/components/airs/FlightsFilter.vue'
+import FlightsItem from '@/components/airs/FlightsItem.vue'
+import FlightsHead from '@/components/airs/FlightsHead.vue'
+// import { selectAir } from '@/api/air.js'
 export default {
+  components: {
+    FlightsFilter, FlightsItem, FlightsHead
+  },
   data () {
     return {
-      airList: []
+      // 飞机票的总数组
+      flightsList: [],
+      // 搜索后获得的表单
+      form: this.$route.query,
+
+      // 分页开始
+      // 分页后存储的数组
+      Pagination: [],
+      // 当前页码
+      pageIndex: 1,
+      pageSize: 2,
+      total: 1,
+      // 分页结束
+      // 发送筛选数据
+      flightsData: {
+        flights: [],
+        // 筛选信息
+        options: {},
+        // 飞机的信息
+        flightsInfo: {}
+      }
     }
   },
   mounted () {
-    console.log(this.$route)
+    this.init()
+  },
+  methods: {
+    init () {
+      this.$axios.get('/airs', { params: this.form })
+        .then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+          // 总条数
+            this.total = res.data.total
+            // 发送飞机票信息列表
+            this.flightsList = res.data.flights
+            // 发送飞机信息
+            this.flightsData.flightsInfo = res.data.info
+            // 发送筛选数据
+            this.flightsData.options = res.data.options
+            // 一定要一个flights.判断他长度是否存在 存在才让他显示出来
+            this.flightsData.flights = res.data.flights
+            // 分页过滤，从第几页，拿多少条数据
+            // 飞机票分页后的数组
+            this.Pagination = this.flightsList.slice(
+              ((this.pageIndex - 1) * this.pageSize),
+              (this.pageIndex * this.pageSize)
+            )
+          }
+        })
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.init()
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
+      this.pageIndex = val
+      this.init()
+    }
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 *{
   margin: 0;
   padding: 0;
 }
-.airList {
-  .contain {
-    width: 1000px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    .contain_left {
-      margin: 10px 0;
-      flex: 6;
-      .main_nav {
-        .nav_select {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          .select_item {
-            margin: 0 3px;
-            width: 120px;
-          }
-        }
-        .nav_select2 {
-          margin: 10px 0;
-        }
-      }
-      .main {
-        .main_title {
-          display: flex;
-          justify-content: center;
-          text-align: center;
-          justify-content: space-around;
-          border: 1px solid #ccc;
-          color: #ccc;
-          background-color: #f6f6f6;
-          height: 40px;
-          align-items: center;
-          margin: 20px 0;
-          font-size: 12px;
-        }
-      }
-      .main_body {
-        .body_item {
-          width: 100%;
-          // height: 60px;
-          border: 1px solid #eee;
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          margin: 12px 0;
-          .item_date {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100px;
-            justify-content: center;
-            // .item_left{
-            //   display: flex;
-            //   flex-direction: column;
-            //   justify-content: center;
-              p:nth-child(1) {
-                font-size: 25px;
-              }
-              p:nth-child(2) {
-                font-size: 13px;
-                margin-top: 5px;
-                color: #ccc;
-              }
-            // }
-          }
-              .price{
-                font-size: 20px;
-                color: orange;
-              }
-        }
-      }
-      .contain_hide{
-        background-color: #f6f6f6;
-        display: flex;
-        align-items: center;
-        border: 1px solid #ccc;
-        height: 90px;
-        .hide_left{
-          flex: 1;
-          margin-left: 20px;
-        }
-        .hide_right{
-          flex: 5;
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-
-        .hide_center{
-          >span:nth-child(1){
-            color: green;
-          }
-          font-size: 13px;
-
-        }
-        .hide_price{
-          color: orange;
-          font-size: 20px;
-
-        }
-        .hide_btn{
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        >p{
-          font-size: 13px;
-        }
-        }
-        }
-
-      }
-    }
-    .contain_right {
-      margin:10px 20px;
-      flex: 2;
-      .contain_call{
-        border: 1px solid #eee;
-        .call_icon{
-          display: flex;
-          justify-content: space-around;
-          .icon_item{
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            span:nth-child(1){
-              font-size: 40px;
-              color: blue;
-            }
-            span:nth-child(2){
-              font-size: 12px;
-              text-align: center;
-            }
-          }
-        }
-        p{
-          width: 100%;
-          height: 40px;
-          background-color: #eee;
-          line-height: 40px;
-          padding: 0 3px;
-          font-size: 14px;
-          box-sizing: border-box;
-          }
-      }
-      .contain_history{
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        .history_title{
-          height: 30px;
-          line-height: 30px;
-          border-bottom: 1px solid #eee;
-          padding: 4px;
-        }
-        .history_item{
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px 10px;
-          box-sizing: border-box;
-          p:nth-child(1){
-            font-size: 16px;
-          }
-            p:nth-child(2){
-            font-size: 12px;
-            color: #ccc;
-          }
-          .item_right{
-            span{
-              display: block;
-              font-size: 12px;
-              color: #fff;
-              background-color:orange;
-              text-align: center;
-              height: 24px;
-              width: 50px;
-              line-height: 24px;
-              border-radius: 5px;
-            }
-          }
-        }
-      }
-    }
-  }
+.flights {
+  width: 1000px;
+  margin: 0 auto;
+  display: flex;
+}
+.flights_main {
+  flex: 5;
+}
+.flights_aside {
+  flex: 2;
 }
 </style>

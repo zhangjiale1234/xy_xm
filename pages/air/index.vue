@@ -16,7 +16,7 @@
           </div>
           <div class="main_body">
             <div class="body_input">
-              <el-form ref="form" label-width="100px" :rules="rules">
+              <el-form ref="form" label-width="100px">
                 <el-form-item label="出发城市" prop="departCity">
                   <el-autocomplete
                     v-model="form.departCity"
@@ -75,29 +75,18 @@ export default {
       restaurants: [],
       form: {
       // 出发城市
-        departCity: '',
+        departCity: '上海',
         // 出发城市码
         departCode: '',
         // 目标城市
-        destCity: '',
+        destCity: '广州',
         // 目标城市码
         destCode: '',
         // 日期
         departDate: ''
       },
-      currentIndex: 0,
+      currentIndex: 0
       // 添加规则
-      rules: {
-        // departCity: [
-        //   { required: true, message: '请输入出发城市', trigger: 'blur' }
-        // ],
-        // destCity: [
-        //   { required: true, message: '请输入到达城市', trigger: 'blur' }
-        // ],
-        // departDate: [
-        //   { required: true, message: '请输入出发日期', trigger: 'blur' }
-        // ]
-      }
     }
   },
   // mounted () {
@@ -114,6 +103,23 @@ export default {
       if (this.form.departCity && this.form.destCity && this.form.departDate) {
         // 判断是否有值，有值在跳转页面发送请求
         this.$router.push({ path: '/air/airList', query: this.form })
+        // 把记录记录到本地存储里面，后期历史记录要使用
+        // 取出来
+        const historyStr = localStorage.getItem('historyArr') || '[]'
+        // 变成数组
+        const arr = JSON.parse(historyStr)
+        // 寻找重复值
+        const index = arr.findIndex(
+          v => JSON.stringify(this.form) === JSON.stringify(v)
+        )
+        // 不等于-1就相当于找到了 ，把他删掉
+        if (index !== -1) {
+          arr.splice(index, 1)
+        }
+        // 如果不是就直接加到数组里面
+        arr.unshift(this.form)
+        // 存储回本地存储里面
+        localStorage.setItem('historyArr', JSON.stringify(arr))
       } else {
         this.$message.warning('请输入正确的机票信息')
         return false

@@ -35,7 +35,9 @@
           <div class="seat_row_btns">
             <div>
               <el-button type="warning" size="mini" style="width:60px;height:30px">
-                选定
+                <div @click="headleOrder(index)">
+                  选定
+                </div>
               </el-button>
               <p>剩余:{{ item.discount }}</p>
             </div>
@@ -59,6 +61,13 @@ export default {
     headleShow () {
       this.isShow = !this.isShow
       this.$emit('isShow', this.isShow)
+    },
+    headleOrder (index) {
+      // 点击选定获取id和xid跳转后带过机票详情页面
+      console.log(this.flightslist.seat_infos[index])
+      const xid = this.flightslist.seat_infos[index].seat_xid
+      const id = this.flightslist.id
+      this.$router.push({ path: 'order/' + id, query: { seat_xid: xid } })
     }
   }
 }

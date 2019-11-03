@@ -19,7 +19,7 @@
         </nuxt-link>
         <nuxt-link
           class="pages_item"
-          to="/post"
+          to="/post/index"
         >
           旅游攻略
         </nuxt-link>

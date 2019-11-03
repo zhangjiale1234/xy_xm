@@ -105,6 +105,7 @@ export default {
               // 总条数
               this.total = res.data.total
               // 发送飞机票信息列表
+              // 筛选过后的数据，一开始是和总数据一样多
               this.flightsList = res.data.flights
               // 发送飞机信息
               this.flightsData.flightsInfo = res.data.info
@@ -114,15 +115,15 @@ export default {
               this.flightsData.flights = res.data.flights
               // 分页过滤，从第几页，拿多少条数据
               // 飞机票分页后的数组
-              this.Pagination = this.flightsData.flights.slice(
+              this.Pagination = this.flightsList.slice(
                 ((this.pageIndex - 1) * this.pageSize),
                 (this.pageIndex * this.pageSize)
               )
             }
           })
       } else {
-        this.total = this.flightsData.flights.length
-        this.Pagination = this.flightsData.flights.slice(
+        this.total = this.flightsList.length
+        this.Pagination = this.flightsList.slice(
           ((this.pageIndex - 1) * this.pageSize),
           (this.pageIndex * this.pageSize)
         )
@@ -143,13 +144,35 @@ export default {
     },
     // 接收子组件传送过来的时间
     headleInputChange (optionsInfo) {
-      console.log()
+      console.log(optionsInfo)
 
       const flightsList = this.flightsData.flights.filter((e) => {
         // 过滤机场信息
-        return optionsInfo.airport === '' || optionsInfo.airport === e.org_airport_name
+        console.log(e)
+        const isOk1 = optionsInfo.airport === '' || optionsInfo.airport === e.org_airport_name
+        const isOk2 = optionsInfo.company === '' || optionsInfo.company === e.airline_name
+        // 过滤时间
+        // 获取到起飞时间
+        // const Time = optionsInfo.flightTimes
+        // const depTime = e.dep_time
+        // const deptime1 = depTime.split(':')[0]
+        // const deptime2 = depTime.split(':')[1]
+        // const dep = +deptime1 + deptime2 * 0.1
+        console.log(optionsInfo.flightTimes)
+        const form = +optionsInfo.flightTimes.split('|')[0]
+        const to = +optionsInfo.flightTimes.split('|')[1]
+        const hour = +e.dep_time.split(':')[0] + +e.dep_time.split(':')[1] / 60
+        // const to = +depTime.split('|')[1]
+        // console.log(to)
+        const isOk3 = optionsInfo.flightTimes === '' || (hour >= form && hour <= to)
+        // 用起飞时间和那个事件做对比
+        // 当触发的时候，返回所有满足条件的数据
+        return isOk1 && isOk2 && isOk3
       })
-      this.flightsData.flights = flightsList
+      // 拿筛选过后的数据进行赋值，在调用一下一开始的函数
+      // flightsList === 筛选过后的数据  this.flightsList===做分页的数据，筛选之后使用this.flightsList来做分页
+      // ，在给分页数组动态展示
+      this.flightsList = flightsList
       this.init()
     }
 

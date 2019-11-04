@@ -65,11 +65,6 @@ export default {
   },
   mounted () {
     console.log(this.hotelInfo)
-    // this.$axios.get(`/hotels`).then((res) => {
-    //   this.hotelInfo = res.data.data
-    //   this.total = res.data.total
-    //   console.log(this.hotelInfo)
-    // })
   }
 }
 </script>

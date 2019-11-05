@@ -5,6 +5,7 @@
         <img
           :src="item.photos"
           alt
+          @click="headleToLink(item.id)"
         >
       </div>
       <div class="item_main">
@@ -22,9 +23,6 @@
           <div class="item_grade">
             <div class="grade">
               <span v-for="(i,index) in Math.floor(item.stars)" :key="index" class="el-rate__icon el-icon-star-on" style="color:#ff9900" />
-              <!-- <span class="el-rate__icon el-icon-star-on" style="color:#ff9900" />
-              <span class="el-rate__icon el-icon-star-on" style="color:#ff9900" />
-              <span class="el-rate__icon el-icon-star-on" style="color:#ff9900" /> -->
               <span>{{ item.stars }}分</span>
             </div>
             <span>
@@ -65,6 +63,11 @@ export default {
   },
   mounted () {
     console.log(this.hotelInfo)
+  },
+  methods: {
+    headleToLink (id) {
+      this.$router.push({ path: '/hotel/hotelDetail', query: { id } })
+    }
   }
 }
 </script>
@@ -86,6 +89,7 @@ export default {
     .item_img {
       flex: 3;
       img {
+        cursor: pointer;
         width: 100%;
         height: 200px;
       }

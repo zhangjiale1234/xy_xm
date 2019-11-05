@@ -9,6 +9,8 @@
         @headleTypesChange="headleTypesChange"
         @headlebrandsChange="headlebrandsChange"
         @headleAssetsChange="headleAssetsChange"
+        @hearleChange="hearleChange"
+        @headleLevelsChange="headleLevelsChange"
       />
     </div>
     <div class="hotel_item">
@@ -88,6 +90,18 @@ export default {
           this.paging.total = res.data.total
         })
     },
+    initChange (data) {
+      this.$axios
+        .get(
+          `/hotels?&_start=${this.paging.pageIndex}&_limit=${this.paging.pageSize}`,
+          { params: data }
+        )
+        .then((res) => {
+          console.log(res)
+          this.paging.total = res.data.total
+          this.fliterList = res.data.data
+        })
+    },
     // 筛选类型的函数
     selectType () {
       this.selectTypes.forEach((e) => {
@@ -102,17 +116,27 @@ export default {
           })
       })
     },
+    // 酒店等级
+    headleLevelsChange (leves) {
+      leves.forEach((e) => {
+        const data = { hotellevel: e }
+        this.initChange(data)
+      })
+      if (leves.length === 0) {
+        this.init()
+      }
+    },
     handleSizeChange (value) {
       this.paging.pageSize = value
       // 筛选类型的函数
-      this.selectType()
+      this.init()
       // console.log(value)
     },
     handleCurrentChange (value) {
       this.paging.pageIndex = value
       // 点击下一页后要继续发送hoteltype这个参数
       // 筛选类型的函数
-      this.selectType()
+      this.init()
     },
     headleTypesChange (types) {
       // 存储被选中的类型的id数组
@@ -130,18 +154,12 @@ export default {
           })
       })
     },
+    // 酒店品牌
     headlebrandsChange (branch) {
       this.selectBranch = branch
       branch.forEach((e) => {
-        this.$axios
-          .get(
-            `/hotels?&_start=${this.paging.pageIndex}&_limit=${this.paging.pageSize}`,
-            { params: { hotelbrand: e } }
-          )
-          .then((res) => {
-            this.paging.total = res.data.total
-            this.fliterList = res.data.data
-          })
+        const data = { hotelbrand: e }
+        this.initChange(data)
       })
       // 如果类型id数组长度等于0，代表全部都没选中了，重新刷新一下页面
       if (branch.length === 0) {
@@ -150,18 +168,21 @@ export default {
     },
     headleAssetsChange (facilities) {
       facilities.forEach((e) => {
-        this.$axios
-          .get(
-            `/hotels?&_start=${this.paging.pageIndex}&_limit=${this.paging.pageSize}`,
-            { params: { hotelasset: e } }
-          )
-          .then((res) => {
-            console.log(res)
-            this.paging.total = res.data.total
-            this.fliterList = res.data.data
-          })
+        // 参数
+        const data = { hotelasset: e }
+        // 调用
+        this.initChange(data)
       })
+      if (facilities.length === 0) {
+        this.init()
+      }
+    },
+    hearleChange (value) {
+      const data = { price_lt: value }
+      this.initChange(data)
     }
+    // 当每一个change改变的时候
+    // 循环判断
   }
 }
 </script>

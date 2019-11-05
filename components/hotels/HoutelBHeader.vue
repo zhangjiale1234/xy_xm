@@ -15,16 +15,21 @@
         <div class="hotel_grade">
           <el-dropdown size="small">
             <div class="el-dropdown-link select">
-              <p>不限</p>
+              <p v-if="leves.length===0">
+                不限
+              </p>
+              <p v-else>
+                已选择{{ leves.length }}项
+              </p>
               <i class="el-icon-arrow-down el-icon--right" />
             </div>
             <el-dropdown-menu slot="dropdown" size="medium">
               <el-dropdown-item
-                v-for="(item,index) in hotelCondition.levels"
+                v-for="(item) in hotelCondition.levels"
                 :key="item.id"
                 style="width:120px;"
               >
-                <el-checkbox v-model="leves[index]" :label="item.name" style="width:150px;" @change="headleLevelsChange">
+                <el-checkbox v-model="leves" :label="item.id" style="width:150px;" @change="headleLevelsChange">
                   {{ item.name }}
                 </el-checkbox>
               </el-dropdown-item>
@@ -37,7 +42,12 @@
         <div class="hotel_grade">
           <el-dropdown size="small">
             <div class="el-dropdown-link select">
-              <p>不限</p>
+              <p v-if="types.length===0">
+                不限
+              </p>
+              <p v-else>
+                已选择{{ types.length }}项
+              </p>
               <i class="el-icon-arrow-down el-icon--right" />
             </div>
             <el-dropdown-menu slot="dropdown" size="medium">
@@ -59,7 +69,12 @@
         <div class="hotel_grade">
           <el-dropdown size="small">
             <div class="el-dropdown-link select">
-              <p>不限</p>
+              <p v-if="facilities.length===0">
+                不限
+              </p>
+              <p v-else>
+                已选择{{ facilities.length }}项
+              </p>
               <i class="el-icon-arrow-down el-icon--right" />
             </div>
             <el-dropdown-menu slot="dropdown" size="medium">
@@ -81,7 +96,12 @@
         <div class="hotel_grade">
           <el-dropdown size="small">
             <div class="el-dropdown-link select">
-              <p>不限</p>
+              <p v-if="branch.length===0">
+                不限
+              </p>
+              <p v-else>
+                已选择{{ branch.length }}项
+              </p>
               <i class="el-icon-arrow-down el-icon--right" />
             </div>
             <el-dropdown-menu slot="dropdown" size="medium">
@@ -145,14 +165,16 @@ export default {
     this.hotelCondition.levels = this.options.levels
     this.hotelCondition.types = this.options.types
     this.hotelCondition.brands = this.options.brands
-    this.leves = this.hotelCondition.levels.map(v => false)
+    // this.leves = this.hotelCondition.levels.map(v => false)
   },
   methods: {
     headleChange (value) {
       console.log(value)
+      this.$emit('hearleChange', value)
     },
     headleLevelsChange (value) {
-      console.log(value)
+      console.log(this.leves)
+      this.$emit('headleLevelsChange', this.leves)
     },
     headleTypesChange (value) {
       // 发送被选中的住宿条件给父组件
@@ -172,6 +194,7 @@ export default {
       console.log(branch)
       this.$emit('headlebrandsChange', branch)
     }
+
   }
 }
 </script>

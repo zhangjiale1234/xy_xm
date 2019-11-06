@@ -51,7 +51,7 @@ export default {
       paging: {
         // 当前页码
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 4,
         total: 0
       },
       // 过滤后的数组
@@ -61,7 +61,9 @@ export default {
       // 被选中的酒店设施
       selectFacilities: [],
       // 选中后的酒店品牌
-      selectBranch: []
+      selectBranch: [],
+      // 选中的酒店登记
+      leaves: []
     }
   },
   mounted () {
@@ -103,21 +105,36 @@ export default {
         })
     },
     // 筛选类型的函数
-    selectType () {
-      this.selectTypes.forEach((e) => {
+    selectType (data) {
+      if (data) {
+        // this.selectTypes.forEach((e) => {
         this.$axios
           .get(
             `/hotels?_start=${this.paging.pageIndex}&_limit=${this.paging.pageSize}`,
-            { params: { hoteltype: e } }
+            { params: data }
           )
           .then((res) => {
             this.paging.total = res.data.total
             this.fliterList = res.data.data
           })
-      })
+        // })
+      } else {
+        this.$axios
+          .get(
+            `/hotels?_start=${this.paging.pageIndex}&_limit=${this.paging.pageSize}`
+          )
+          .then((res) => {
+            this.fliterList = res.data.data
+            // 赋值,全部值
+            this.hotelInfo = res.data.data
+            // 总条数
+            this.paging.total = res.data.total
+          })
+      }
     },
     // 酒店等级
     headleLevelsChange (leves) {
+      this.leaves = leves
       leves.forEach((e) => {
         const data = { hotellevel: e }
         this.initChange(data)
@@ -129,14 +146,25 @@ export default {
     handleSizeChange (value) {
       this.paging.pageSize = value
       // 筛选类型的函数
-      this.init()
-      // console.log(value)
+      this.selectType()
     },
     handleCurrentChange (value) {
       this.paging.pageIndex = value
       // 点击下一页后要继续发送hoteltype这个参数
+      // 分页的时候判断一下是否有data有就拼接 ，没有就直接调用init
+      const hotelbrand = this.selectBranch
+      if (hotelbrand.length) {
+        const data = hotelbrand.map((e) => {
+          return { hotelbrand: e }
+        })
+        data.forEach((v) => {
+          this.selectType(v)
+        })
+      } else {
+        this.init()
+      }
+
       // 筛选类型的函数
-      this.init()
     },
     headleTypesChange (types) {
       // 存储被选中的类型的id数组
@@ -164,9 +192,11 @@ export default {
       // 如果类型id数组长度等于0，代表全部都没选中了，重新刷新一下页面
       if (branch.length === 0) {
         this.init()
+        this.paging.pageIndex = 1
       }
     },
     headleAssetsChange (facilities) {
+      this.selectFacilities = facilities
       facilities.forEach((e) => {
         // 参数
         const data = { hotelasset: e }

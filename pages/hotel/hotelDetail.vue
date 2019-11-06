@@ -17,13 +17,25 @@
       </div>
       <!-- 头标题 -->
       <div class="detailHeader">
-        <p>南京世贸江滨希尔酒店<span class="iconfont iconhuangguan" style="color:#ff9900" /></p>
-        <p>nan jing shi mao bin jiang xi er dun hotel</p>
-        <p><span class="iconfont iconlocation" />淮滨路一路(近南通路，世贸江滨新城)</p>
+        <p>{{ infoList.name }}<span class="iconfont iconhuangguan" style="color:#ff9900" /></p>
+        <p>{{ infoList.alias }}</p>
+        <p><span class="iconfont iconlocation" />{{ infoList.address }}</p>
       </div>
       <!-- 头标题 -->
       <div class="detail_main">
-        <DetailImg />
+        <DetailImg v-if="info.length" :infolist="infoList" />
+      </div>
+      <!-- 地图 -->
+      <div class="map">
+        <div class="map_info">
+          <hotelMap />
+        </div>
+        <div class="map_tab">
+          <hotelTab v-if="info.length" :city="city" />
+        </div>
+      </div>
+      <div class="hotelInfo">
+        <hotelInfo :infolist="infoList" />
       </div>
     </div>
   </div>
@@ -31,19 +43,28 @@
 
 <script>
 import DetailImg from '@/components/hotels/DetailImg'
+import hotelInfo from '@/components/hotels/hotelInfo'
+import hotelMap from '@/components/hotels/hotelMap'
+import hotelTab from '@/components/hotels/hotelTab'
 export default {
   components: {
-    DetailImg
+    DetailImg, hotelInfo, hotelMap, hotelTab
   },
   data () {
     return {
-      id: this.$route.query.id
+      id: this.$route.query.id,
+      infoList: {},
+      info: [],
+      // 城市景点
+      city: {}
     }
   },
   mounted () {
     const id = this.id
     this.$axios.get('/hotels?id=' + id).then((res) => {
-      console.log(res)
+      this.city = res.data.data[0].city
+      this.infoList = res.data.data[0]
+      this.info = res.data.data
     })
   }
 }
@@ -76,6 +97,14 @@ export default {
         p:nth-child(3){
             color: #666666;
         }
+    }
+  }
+  .map{
+      display: flex;
+      margin: 10px 0px;
+    .map_tab{
+        flex:1;
+        margin: 0 20px;
     }
   }
 }
